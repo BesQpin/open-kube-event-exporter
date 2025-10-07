@@ -93,5 +93,5 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ steps.lower-repo.outputs.repository }}/${{ parameters.app-name }}:latest
-            ghcr.io/${{ steps.lower-repo.outputs.repository }}/${{ parameters.app-name }}:${{ env.VERSION }}
+            ghcr.io/${{ steps.lower-repo.outputs.repository }}/${{ env.APP_NAME }}:latest
+            ghcr.io/${{ steps.lower-repo.outputs.repository }}/${{ env.APP_NAME }}:${{ env.VERSION }}
