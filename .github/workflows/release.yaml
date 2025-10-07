@@ -38,6 +38,7 @@ jobs:
 
       - name: Build
         run: |
+          go mod tidy -x -v
           mkdir -p dist
           GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/${{ env.APP_NAME }}-${{ matrix.goos }}-${{ matrix.goarch }} .
 
