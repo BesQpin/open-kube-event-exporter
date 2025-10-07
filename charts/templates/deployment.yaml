@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "open-kube-event-exporter.fullname" . }}
+  labels:
+    app: {{ include "open-kube-event-exporter.name" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "open-kube-event-exporter.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "open-kube-event-exporter.name" . }}
+    spec:
+      containers:
+        - name: open-kube-event-exporter
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+          env:
+            - name: LOKI_URL
+              value: "{{ .Values.loki.url }}"
+            - name: LOKI_TENANT_ID
+              value: "{{ .Values.loki.tenantID }}"
