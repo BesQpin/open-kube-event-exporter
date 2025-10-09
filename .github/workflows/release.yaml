@@ -53,7 +53,8 @@ jobs:
     uses: besqpin/workflow-library/.github/workflows/ghcr-publish-image.yaml@main
     needs: build
     with:
-      image-path: base-chart
+      APP_NAME: ${{ env.APP_NAME }}
+      image-path: .
       ghcr-org: besqpin
       image-name: open-kube-event-exporter
       event_name: ${{ github.event_name }}
