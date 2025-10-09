@@ -49,7 +49,7 @@ jobs:
     uses: besqpin/workflow-library/.github/workflows/build-go.yaml@main
     needs: [set-vars, versioning]
     with:
-      go-version: ${{ steps.export.outputs.go_version }}
+      go-version: ${{ needs.set-vars.outputs.go_version }}
       app-name: ${{ needs.set-vars.outputs.app_name }}
       version: ${{ needs.versioning.outputs.version }}
 
