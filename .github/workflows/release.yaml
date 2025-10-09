@@ -51,6 +51,7 @@ jobs:
 
   publish-docker-image:
     uses: besqpin/workflow-library/.github/workflows/ghcr-publish-image.yaml@main
+    needs: build
     with:
       image-path: base-chart
       ghcr-org: besqpin
@@ -63,6 +64,7 @@ jobs:
 
   publish-helm-chart:
       uses: besqpin/workflow-library/.github/workflows/ghcr-publish-helm.yaml@main
+      needs: publish-docker-image
       with:
         chart-path: charts
         ghcr-org: besqpin
