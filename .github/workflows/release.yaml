@@ -48,7 +48,7 @@ jobs:
           name: ${{ env.APP_NAME }}-${{ matrix.goos }}-${{ matrix.goarch }}
           path: dist/*
 
-  docker:
+  publish-docker-image:
     uses: besqpin/workflow-library/.github/workflows/ghcr-publish-image.yaml@main
     with:
       image-path: base-chart
@@ -59,9 +59,8 @@ jobs:
     secrets:
       GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
-  
-  helm:
-    ghcr-publish:
+
+  publish-helm-chart:
       uses: besqpin/workflow-library/.github/workflows/ghcr-publish-helm.yaml@main
       with:
         chart-path: charts
