@@ -13,10 +13,11 @@ permissions:
 
 env:
   APP_NAME: open-kube-event-exporter
+  GO_VERSION: "1.24"
 
 jobs:
   # --------------------------------
-  # Set variables from env
+  # 1️⃣ Set variables from env
   # --------------------------------
   set-vars:
     runs-on: ubuntu-latest
@@ -27,85 +28,59 @@ jobs:
         run: echo "app_name=${{ env.APP_NAME }}" >> $GITHUB_OUTPUT
 
   # --------------------------------
-  # Version resolution or bump
+  # 2️⃣ Version resolution or bump
   # --------------------------------
   versioning:
     uses: besqpin/workflow-library/.github/workflows/versioning.yaml@main
+    needs: set-vars
     with:
       event_name: ${{ github.event_name }}
       pr_merged: ${{ github.event.pull_request && github.event.pull_request.merged || false }}
-      # If this workflow is triggered by a tag push, just read it.
-      # If triggered by a branch push or PR merge, bump automatically.
       mode: ${{ github.ref_type == 'tag' && 'read' || 'bump' }}
 
   # --------------------------------
-  # Build Go binaries
+  # 3️⃣ Build Go binaries (reusable workflow)
   # --------------------------------
-  build:
-    name: Build binaries
-    runs-on: ubuntu-latest
+  build-go:
+    uses: besqpin/workflow-library/.github/workflows/build-go.yaml@main
     needs: [set-vars, versioning]
-    strategy:
-      matrix:
-        goos: [linux]
-        goarch: [amd64]
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: "1.24"
-
-      - name: Download Go modules
-        run: go mod download
-
-      - name: Build
-        run: |
-          go mod tidy -x -v
-          mkdir -p dist
-          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} \
-            go build -o dist/${{ needs.set-vars.outputs.app_name }}-${{ matrix.goos }}-${{ matrix.goarch }} .
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ needs.set-vars.outputs.app_name }}-${{ matrix.goos }}-${{ matrix.goarch }}
-          path: dist/*
+    with:
+      go-version: ${{ env.GO_VERSION }}
+      app-name: ${{ needs.set-vars.outputs.app_name }}
+      version: ${{ needs.versioning.outputs.version }}
 
   # --------------------------------
-  # Publish Docker image
+  # 4️⃣ Build & push Docker image
   # --------------------------------
   publish-docker-image:
     uses: besqpin/workflow-library/.github/workflows/ghcr-publish-image.yaml@main
-    needs: [build, set-vars, versioning]
+    needs: [build-go, set-vars, versioning]
     with:
       APP_NAME: ${{ needs.set-vars.outputs.app_name }}
+      version: ${{ needs.versioning.outputs.version }}
       image-path: .
       ghcr-org: besqpin
       image-name: ${{ needs.set-vars.outputs.app_name }}
       event_name: ${{ github.event_name }}
       pr_merged: ${{ github.event.pull_request && github.event.pull_request.merged || false }}
-      version: ${{ needs.versioning.outputs.version }}
     secrets:
       GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
 
   # --------------------------------
-  # Publish Helm chart
+  # 5️⃣ Publish Helm chart
   # --------------------------------
   publish-helm-chart:
     uses: besqpin/workflow-library/.github/workflows/ghcr-publish-helm.yaml@main
-    needs: [build, set-vars, publish-docker-image, versioning]
+    needs: [build-go, set-vars, publish-docker-image, versioning]
     with:
       chart-path: charts
       ghcr-org: besqpin
       chart-name: ${{ needs.set-vars.outputs.app_name }}
+      version: ${{ needs.versioning.outputs.version }}
       event_name: ${{ github.event_name }}
       pr_merged: ${{ github.event.pull_request && github.event.pull_request.merged || false }}
-      version: ${{ needs.versioning.outputs.version }}
     secrets:
       GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+
