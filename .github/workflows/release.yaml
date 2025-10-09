@@ -36,7 +36,6 @@ jobs:
   # --------------------------------
   versioning:
     uses: besqpin/workflow-library/.github/workflows/versioning.yaml@main
-    needs: set-vars
     with:
       event_name: ${{ github.event_name }}
       pr_merged: ${{ github.event.pull_request && github.event.pull_request.merged || false }}
