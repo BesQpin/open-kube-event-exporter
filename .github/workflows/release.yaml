@@ -46,7 +46,7 @@ jobs:
   # 3️⃣ Build Go binaries (reusable workflow)
   # --------------------------------
   build-go:
-    uses: besqpin/workflow-library/.github/workflows/build-go.yaml@main
+    uses: besqpin/workflow-library/.github/workflows/go-build.yaml@main
     needs: [set-vars, versioning]
     with:
       go-version: ${{ needs.set-vars.outputs.go_version }}
