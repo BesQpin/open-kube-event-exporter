@@ -20,9 +20,10 @@ jobs:
   set-vars:
     runs-on: ubuntu-latest
     outputs:
-      app_name: ${{ needs.set-vars.outputs.app_name }}
+      app_name: ${{ steps.export.outputs.app_name }}
     steps:
-      - run: echo "APP_NAME=${{ needs.set-vars.outputs.app_name }}"
+      - id: export
+        run: echo "app_name=${{ env.APP_NAME }}" >> $GITHUB_OUTPUT
 
   build:
     name: Build binaries
@@ -65,7 +66,7 @@ jobs:
       APP_NAME: ${{ needs.set-vars.outputs.app_name }}
       image-path: .
       ghcr-org: besqpin
-      image-name: open-kube-event-exporter
+      image-name: ${{ needs.set-vars.outputs.app_name }}
       event_name: ${{ github.event_name }}
       pr_merged: ${{ github.event.pull_request && github.event.pull_request.merged || false }}
     secrets:
@@ -74,11 +75,11 @@ jobs:
 
   publish-helm-chart:
       uses: besqpin/workflow-library/.github/workflows/ghcr-publish-helm.yaml@main
-      needs: publish-docker-image
+      needs: [build, set-vars, publish-docker-image]
       with:
         chart-path: charts
         ghcr-org: besqpin
-        chart-name: open-kube-event-exporter
+        chart-name: ${{ needs.set-vars.outputs.app_name }}
         event_name: ${{ github.event_name }}
         pr_merged: ${{ github.event.pull_request && github.event.pull_request.merged || false }}
       secrets:
