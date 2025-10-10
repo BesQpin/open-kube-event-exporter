@@ -94,7 +94,7 @@ jobs:
     needs: [build-go, set-vars, publish-docker-image, versioning, publish-helm-chart]
     uses: besqpin/workflow-library/.github/workflows/tag-and-release.yaml@main
     with:
-      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
       image: ${{ needs.publish-docker-image.outputs.image }}
       version: ${{ needs.versioning.outputs.version }}
-
+    secrets:
+      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
