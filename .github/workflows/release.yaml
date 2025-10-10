@@ -92,7 +92,7 @@ jobs:
   # --------------------------------
   release:
     needs: [build-go, set-vars, publish-docker-image, versioning, publish-helm-chart]
-    uses: besqpin/workflow-library/.github/workflows/tag-and-release.yml@main
+    uses: besqpin/workflow-library/.github/workflows/tag-and-release.yaml@main
     with:
       version: ${{ needs.versioning.outputs.version }}
       image: ${{ needs.publish-docker-image.outputs.image }}
