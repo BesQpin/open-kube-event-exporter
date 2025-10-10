@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: {{ include "open-kube-event-exporter.fullname" . }}
   labels:
-    app: {{ include "open-kube-event-exporter.name" . }}
+    {{- include "open-kube-event-exporter.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -25,3 +25,5 @@ spec:
               value: "{{ .Values.loki.url }}"
             - name: LOKI_TENANT_ID
               value: "{{ .Values.loki.tenantID }}"
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}

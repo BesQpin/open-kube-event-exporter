@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/BesQpin/open-kube-event-exporter
+  repository: ghcr.io/besqpin/open-kube-event-exporter/open-kube-event-exporter
   tag: latest
   pullPolicy: IfNotPresent
 
@@ -9,14 +9,14 @@ service:
   type: ClusterIP
   port: 8080
 
+loki:
+  url: ""
+  tenantID: ""
+
 prometheus:
   enabled: true
   serviceMonitor:
-    enabled: true
     interval: 30s
     scrapeTimeout: 10s
 
-loki:
-  enabled: true
-  url: ""
-  tenantID: ""
+resources: {}

@@ -4,13 +4,13 @@ kind: ServiceMonitor
 metadata:
   name: {{ include "open-kube-event-exporter.fullname" . }}
   labels:
-    release: prometheus
+    {{- include "open-kube-event-exporter.labels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
       app: {{ include "open-kube-event-exporter.name" . }}
   endpoints:
-    - port: {{ .Values.service.port }}
+    - port: metrics
       interval: {{ .Values.prometheus.serviceMonitor.interval }}
       scrapeTimeout: {{ .Values.prometheus.serviceMonitor.scrapeTimeout }}
 {{- end }}
