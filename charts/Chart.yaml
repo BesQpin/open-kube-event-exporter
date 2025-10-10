@@ -4,4 +4,4 @@ description: A lightweight Kubernetes event exporter for Prometheus and Loki
 type: application
 version: 1.1.2
 appVersion: "1.1.2"
-icon: https://raw.githubusercontent.com/BesQpin/open-kube-event-exporter/main/icon.png
+icon: https://raw.githubusercontent.com/BesQpin/open-kube-event-exporter/main/open-kube-event-exporter.png

@@ -1,5 +1,7 @@
 # open-kube-event-exporter
 
+<img src="open-kube-event-exporter.png" alt="alt text" style="width:10%;"/>
+
 `open-kube-event-exporter` is a lightweight, open-source **Kubernetes event exporter** written in **Go**.  
 It listens to events across your Kubernetes cluster and exports them to **Prometheus** and/or **Loki**, allowing you to monitor and analyze event activity with your existing observability stack.
 
